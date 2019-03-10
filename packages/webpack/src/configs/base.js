@@ -1,11 +1,13 @@
 import webpack from 'webpack'
-import { getBabelConfig } from '../loaders'
-import { getCompilerName } from '../utils'
+import WebpackBar from 'webpackbar'
+import { getBabelConfig, getCssOptions } from '../loaders'
+import { getCompilerName, getEnvColor } from '../utils'
 
 export default async function base(env, options) {
 	const { webpack: { alias } } = options
 	const name = getCompilerName(env)
 	const babelConfig = await getBabelConfig(env, options)
+	const cssConfig = getCssOptions(env)
 
 	return {
 		name,
@@ -19,12 +21,22 @@ export default async function base(env, options) {
 						loader: 'babel-loader',
 						options: babelConfig
 					}
+				},
+				{
+					test: /\.css$/,
+					use: cssConfig
 				}
 			]
 		},
 		resolve: {
 			alias
 		},
-		plugins: []
+		plugins: [
+			new WebpackBar({
+				color: getEnvColor(env),
+				name,
+				reporters: ['basic', 'fancy', 'profile', 'stats']
+			})
+		]
 	}
 }
