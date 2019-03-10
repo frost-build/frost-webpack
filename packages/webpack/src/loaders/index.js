@@ -1,0 +1,1 @@
+export { getBabelConfig } from './babel'
