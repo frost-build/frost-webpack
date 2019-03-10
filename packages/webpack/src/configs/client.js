@@ -1,4 +1,5 @@
 import webpack from 'webpack'
+import ExtractPlugin from 'mini-css-extract-plugin'
 import HtmlPlugin from 'html-webpack-plugin'
 import base from './base'
 
@@ -33,6 +34,10 @@ export default function client(options) {
 	config.plugins = [
 		...config.plugins,
 		new webpack.HashedModuleIdsPlugin(),
+		!env.dev && new ExtractPlugin({
+			allChunks: true,
+			filename: '[contenthash:8].css'
+		}),
 		options.mode === 'spa' && new HtmlPlugin({
 			filename: `index${env.legacy ? '-legacy' : ''}.html`,
 			template: paths.template
